@@ -4,42 +4,77 @@ import (
 	"fmt"
 )
 
+// LinkedListInterface определяет методы для работы с односвязным списком
+// Индекс головы начинается с 1, но это можно изменить
 type LinkedListInterface interface {
-	// Traverse - проходит по всем узлам списка и выводит их значения
+	// Traverse - Обходит все узлы в списке и выводит их значения
+	// Время выполнения: O(n), Память: O(1), так как не требуется дополнительное хранение данных
 	Traverse()
-	// Searching - ищет и возвращает указатель на узел с указанным значением
-	Searching(value interface{}) *Node
-	// Length - возвращает длину списка
+
+	// Search - Ищет узел с указанным значением и возвращает указатель на этот узел
+	// Время выполнения: O(n), Память: O(1), так как используется только указатель на текущий узел
+	Search(value interface{}) *Node
+
+	// Length - Возвращает длину списка
+	// Время выполнения: O(n), Память: O(1), так как используется только счетчик для подсчета узлов
 	Length() int
-	// InsertFront - вставляет новый узел в начало списка
+
+	// InsertFront - Вставляет новый узел в начало списка
+	// Время выполнения: O(1), Память: O(1), так как создается один новый узел
 	InsertFront(data interface{}) *Node
-	// InsertBack - вставляет новый узел в конец списка
+
+	// InsertBack - Вставляет новый узел в конец списка
+	// Время выполнения: O(1), Память: O(1), так как создается один новый узел
 	InsertBack(data interface{}) *Node
-	// InsertIntoPosition - вставляет новый узел в заданную позицию списка
+
+	// InsertIntoPosition - Вставляет новый узел на указанную позицию в списке
+	// Время выполнения: O(n), Память: O(1), поскольку создается один новый узел
 	InsertIntoPosition(data interface{}, position int) *Node
-	// DeleteFront - удаляет первый узел из списка
+
+	// DeleteFront - Удаляет первый узел из списка
+	// Время выполнения: O(1), Память: O(1), так как не требуется дополнительное хранение данных
 	DeleteFront()
-	// DeleteBack - удаляет последний узел из списка
+
+	// DeleteBack - Удаляет последний узел из списка
+	// Время выполнения: O(n), Память: O(1), так как используется указатель для прохода по списку
 	DeleteBack()
-	// DeleteFromPosition - удаляет узел в указанной позиции
+
+	// DeleteFromPosition - Удаляет узел на указанной позиции в списке
+	// Время выполнения: O(n), Память: O(1), так как используется указатель для прохода по списку
 	DeleteFromPosition(position int)
 
-	// Update - обновляет данные узла в заданной позиции
-	Update(position int, data interface{}) // todo
-	// IsEmpty - проверяет, пуст ли список
-	IsEmpty() bool // todo
-	// Clear - удаляет все узлы из списка, очищая его
-	Clear() // todo
-	// GetAtPosition - возвращает данные узла на заданной позиции
-	GetAtPosition(position int) (interface{}, error) // todo
-	// ReverseTraversal - выполняет обход списка в обратном порядке
-	ReverseTraversal() // todo
-	// Reverse - разворачивает список, меняя порядок узлов на противоположный
-	Reverse() // todo
-	// Merge - сливает другой список с текущим
-	Merge(other *LinkedList) // todo
-	// DeleteByValue - удаляет первый узел с указанным значением
-	DeleteByValue(value interface{}) // todo
+	// Update - Обновляет данные узла на указанной позиции
+	// Время выполнения: O(n), Память: O(1), так как изменяется только значение узла
+	Update(position int, data interface{})
+
+	// IsEmpty - Проверяет, пуст ли список
+	// Время выполнения: O(1), Память: O(1), так как проверяется только указатель на голову списка
+	IsEmpty() bool
+
+	// Clear - Очищает список, удаляя все узлы
+	// Время выполнения: O(1), Память: O(1), так как сбрасываются только указатели на голову и хвост
+	Clear()
+
+	// GetAtPosition - Возвращает данные узла на указанной позиции
+	// Время выполнения: O(n), Память: O(1), так как используется указатель для прохода по списку
+	GetAtPosition(position int) (interface{}, error)
+
+	// Reverse - Разворачивает список, меняя порядок узлов на противоположный
+	// Итеративный метод: Время выполнения: O(n), Память: O(1), так как указатели меняются на месте
+	// Рекурсивный метод: Время выполнения: O(n), Память: O(n), так как каждый рекурсивный вызов требует дополнительного места в стеке
+	Reverse()
+
+	// ReverseTraversal - Выполняет обход списка в обратном порядке с использованием рекурсии
+	// Время выполнения: O(n), Память: O(n), поскольку каждый вызов рекурсии требует дополнительного места в стеке
+	ReverseTraversal()
+
+	// Merge - Сливает другой список с текущим
+	// Время выполнения: O(n), Память: O(1) для простого случая объединения списков
+	Merge(other *LinkedList) // todo пока ленб делать - потом сделатб надо
+
+	// DeleteByValue - Удаляет первый узел с указанным значением
+	// Время выполнения: O(n), Память: O(1), так как требуется указатель для поиска и удаления узла
+	DeleteByValue(value interface{}) // todo пока ленб делатб - потом сделать надо
 }
 
 type Node struct {
@@ -77,14 +112,59 @@ func (ll *LinkedList) Traverse() {
 	fmt.Println("LinkedList traversal complete.")
 }
 
-func (ll *LinkedList) Searching(value interface{}) *Node {
+// ReverseTraversal using recursion – O(n) Time and O(n) Space
+func (ll *LinkedList) ReverseTraversal() {
+	if ll.head == nil {
+		fmt.Println("Linked list is empty.")
+		return
+	}
+	ll.reverseTraversalRecursive(ll.head)
+}
+
+// helper function because we need params
+func (ll *LinkedList) reverseTraversalRecursive(node *Node) {
+	if node == nil {
+		return
+	}
+	ll.reverseTraversalRecursive(node.next)
+
+	fmt.Printf("Node: %v\n", node.data)
+}
+
+// Reverse
+// Вход : Связанный список = 1 -> 2 -> 3 -> 4 -> NULL
+// Выход : Обратный связанный список = 4 -> 3 -> 2 -> 1 -> NULL
+func (ll *LinkedList) Reverse() {
+	if ll.head == nil {
+		fmt.Println("Linked list is empty.")
+		return
+	}
+
+	var previous, next *Node
+	current := ll.head
+
+	// меняем хвост и голову
+	ll.tail = ll.head
+
+	for current != nil {
+		next = current.next
+		current.next = previous
+
+		previous = current
+		current = next
+	}
+
+	ll.head = previous
+}
+
+func (ll *LinkedList) Search(value interface{}) *Node {
 	if ll.head == nil {
 		fmt.Println("Linked list is empty.")
 		return nil
 	}
 
 	currentNode := ll.head
-	for currentNode != nil { // todo разобраться почему так
+	for currentNode != nil {
 		if currentNode.data == value {
 			return currentNode
 		}
@@ -101,11 +181,15 @@ func (ll *LinkedList) Length() int {
 	}
 
 	currentNode := ll.head
-	for currentNode != nil { // todo разобраться почему так
+	for currentNode != nil {
 		length = length + 1
 		currentNode = currentNode.next
 	}
 	return length
+}
+
+func (ll *LinkedList) IsEmpty() bool {
+	return ll.head == nil && ll.tail == nil
 }
 
 func (ll *LinkedList) InsertFront(data interface{}) *Node {
@@ -115,7 +199,7 @@ func (ll *LinkedList) InsertFront(data interface{}) *Node {
 	}
 	ll.head = newNode
 
-	if ll.tail == nil { // todo разобраться почему так
+	if ll.tail == nil {
 		ll.tail = newNode
 	}
 
@@ -149,7 +233,7 @@ func (ll *LinkedList) InsertIntoPosition(data interface{}, position int) *Node {
 	// если position < 1, возвращаем ошибку
 	if position < 1 {
 		fmt.Printf("Invalid position %v", position)
-		return ll.head
+		return nil
 	}
 
 	newNode := Node{
@@ -159,7 +243,7 @@ func (ll *LinkedList) InsertIntoPosition(data interface{}, position int) *Node {
 	if position == 1 {
 		newNode.next = ll.head
 		ll.head = &newNode
-		if ll.tail == nil { // todo разобраться почему так
+		if ll.tail == nil {
 			ll.tail = &newNode
 		}
 		return &newNode
@@ -181,7 +265,7 @@ func (ll *LinkedList) InsertIntoPosition(data interface{}, position int) *Node {
 	newNode.next = currentNode.next
 	currentNode.next = &newNode
 
-	if newNode.next == nil { // todo разобраться почему так
+	if newNode.next == nil {
 		ll.tail = &newNode
 	}
 
@@ -195,7 +279,7 @@ func (ll *LinkedList) DeleteFront() {
 	}
 
 	ll.head = ll.head.next
-	if ll.head == nil { // todo разобраться почему так
+	if ll.head == nil {
 		ll.tail = nil
 	}
 }
@@ -208,7 +292,7 @@ func (ll *LinkedList) DeleteBack() {
 
 	if ll.head.next == nil {
 		ll.head = nil
-		ll.tail = nil // todo разобраться почему так
+		ll.tail = nil
 		return
 	}
 
@@ -237,7 +321,7 @@ func (ll *LinkedList) DeleteFromPosition(position int) {
 	// если позиция 1, то удаляем голову
 	if position == 1 {
 		ll.head = ll.head.next
-		if ll.head == nil { // todo разобраться почему так
+		if ll.head == nil {
 			ll.tail = nil
 		}
 		return
@@ -257,7 +341,83 @@ func (ll *LinkedList) DeleteFromPosition(position int) {
 
 	currentNode.next = currentNode.next.next
 
-	if currentNode.next == nil { // todo разобраться почему так
+	if currentNode.next == nil {
 		ll.tail = currentNode
 	}
+}
+
+func (ll *LinkedList) Update(position int, data interface{}) {
+	if ll.head == nil {
+		fmt.Println("Linked list is empty.")
+		return
+	}
+
+	// если position < 1, возвращаем ошибку
+	if position < 1 {
+		fmt.Printf("Invalid position %v", position)
+		return
+	}
+
+	// если position == 0, то изменяемый узел - голова
+	if position == 1 {
+		ll.head.data = data
+		return
+	}
+
+	currentNode := ll.head
+
+	// дополнительные проверки в цикле + смотрим что мы не выходим за пределы списка
+	for i := 0; i < position && currentNode != nil; i++ {
+		currentNode = currentNode.next
+	}
+
+	// если currentNode == nil или currentNode.next == nil, позиция выходит за пределы списка
+	if currentNode == nil {
+		fmt.Printf("Position: %v out of bounds\n", position)
+		return
+	}
+
+	currentNode.data = data
+
+	return
+
+}
+
+func (ll *LinkedList) Clear() {
+	ll.head = nil
+	ll.tail = nil
+}
+
+func (ll *LinkedList) GetAtPosition(position int) (interface{}, error) {
+	if ll.head == nil {
+		return nil, fmt.Errorf("linked list is empty")
+	}
+	if position < 1 {
+		return nil, fmt.Errorf("invalid position %v", position)
+	}
+	if position == 1 {
+		return ll.head.data, nil
+	}
+
+	currentNode := ll.head
+
+	for i := 0; currentNode != nil && i < position; i++ {
+		currentNode = currentNode.next
+	}
+
+	// вышли за пределы списка -> кидаем ошибку
+	if currentNode == nil {
+		return nil, fmt.Errorf("position: %v out of bounds", position)
+	}
+
+	return currentNode.data, nil
+
+}
+
+func (ll *LinkedList) Merge(other *LinkedList) {
+
+}
+
+func (ll *LinkedList) DeleteByValue(value interface{}) {
+
 }
